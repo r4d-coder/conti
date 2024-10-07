@@ -1,4 +1,3 @@
-```javascript
 document.addEventListener('DOMContentLoaded', () => {
     const pos = document.getElementById('pos');
     const banconote = document.getElementById('banconote');
@@ -37,13 +36,14 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function calcolaRisultato() {
-        let somma =
-            parseFloat(pos.value) +
-            parseFloat(banconote.value) +
-            parseFloat(fondoCassa.value) +
-            parseFloat(ff.value) +
-            parseFloat(rimborsi.value) +
-            parseFloat(altro.value);
+        let somma = 0;
+
+        inputs.forEach(input => {
+            let value = parseFloat(input.value);
+            if (!isNaN(value)) {
+                somma += value;
+            }
+        });
 
         let pagoPaValue = parseFloat(pagoPa.value);
         if (!isNaN(pagoPaValue)) {
@@ -118,4 +118,3 @@ document.addEventListener('DOMContentLoaded', () => {
         link.click();
     }
 });
-```
