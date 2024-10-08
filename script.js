@@ -109,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
             data: new Date().toLocaleString()
         };
 
-        fetch('https://www.prova.com', {
+        fetch('https://script.google.com/macros/s/AKfycbydEn9BkvqE0UBiEIsjLo5CjEOvYD-ACmRLPvvZo6BSYY7cUUGGmkmh0rQKrVx48G9JkQ/exec', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
