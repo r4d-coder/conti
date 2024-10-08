@@ -8,20 +8,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const pagoPa = document.getElementById('pagoPa');
     const farmaconsult = document.getElementById('farmaconsult');
     const scontrinoFiscale = document.getElementById('scontrinoFiscale');
+    const scontrini = document.getElementById('scontrini');
     const risultato = document.getElementById('risultato');
     const resetButton = document.getElementById('resetButton');
     const saveButton = document.getElementById('saveButton');
-    const addSaveButton = document.getElementById('addSaveButton');
+    const sendButton = document.getElementById('sendButton');
 
-    const inputs = [pos, banconote, fondoCassa, ff, rimborsi, altro, pagoPa];
+    const inputs = [pos, banconote, fondoCassa, ff, rimborsi, altro];
 
     inputs.forEach(input => {
         input.addEventListener('input', calcolaRisultato);
     });
+    pagoPa.addEventListener('input', calcolaRisultato);
 
     resetButton.addEventListener('click', resetCampi);
     saveButton.addEventListener('click', salvaSuExcel);
-    addSaveButton.addEventListener('click', aggiungiESalvaDati);
+    sendButton.addEventListener('click', inviaEmail);
 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
@@ -54,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function resetCampi() {
-        inputs.concat(farmaconsult, scontrinoFiscale).forEach(input => {
+        inputs.concat(pagoPa, farmaconsult, scontrinoFiscale, scontrini).forEach(input => {
             input.value = 0;
         });
         calcolaRisultato();
@@ -71,6 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
             ['Pago Pa', pagoPa.value],
             ['Farmaconsult', farmaconsult.value],
             ['Scontrino Fiscale', scontrinoFiscale.value],
+            ['Scontrini', scontrini.value],
             ['Risultato', risultato.textContent],
             ['Data', new Date().toLocaleString()]
         ];
@@ -90,31 +93,34 @@ document.addEventListener('DOMContentLoaded', () => {
         link.click();
     }
 
-    function aggiungiESalvaDati() {
+    function inviaEmail() {
         const data = [
-            pos.value,
-            banconote.value,
-            fondoCassa.value,
-            ff.value,
-            rimborsi.value,
-            altro.value,
-            pagoPa.value,
-            farmaconsult.value,
-            scontrinoFiscale.value,
-            risultato.textContent,
-            new Date().toLocaleString()
+            ['POS', pos.value],
+            ['Banconote', banconote.value],
+            ['Fondo Cassa', fondoCassa.value],
+            ['FF', ff.value],
+            ['Rimborsi', rimborsi.value],
+            ['Altro', altro.value],
+            ['Pago Pa', pagoPa.value],
+            ['Farmaconsult', farmaconsult.value],
+            ['Scontrino Fiscale', scontrinoFiscale.value],
+            ['Scontrini', scontrini.value],
+            ['Risultato', risultato.textContent],
+            ['Data', new Date().toLocaleString()]
         ];
 
-        let csvContent = "";
-        let row = data.join(",");
-        csvContent += row + "\r\n";
+        let csvContent = "data:text/csv;charset=utf-8,";
+        data.forEach(rowArray => {
+            let row = rowArray.join(",");
+            csvContent += row + "\r\n";
+        });
 
-        const encodedUri = "data:text/csv;charset=utf-8," + csvContent;
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "dati_calcolo.csv");
-        document.body.appendChild(link);
+        const encodedUri = encodeURI(csvContent);
+        const email = "tosello.gianmario@protonmail.com";
+        const subject = "Dati Calcolo Sommatoria";
+        const body = encodeURIComponent("In allegato il file CSV con i dati del calcolo sommatoria.");
+        const mailtoLink = `mailto:${email}?subject=${subject}&body=${body}&attachment=${encodedUri}`;
 
-        link.click();
+        window.location.href = mailtoLink;
     }
 });
