@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     resetButton.addEventListener('click', resetCampi);
     saveButton.addEventListener('click', salvaSuExcel);
-    sendButton.addEventListener('click', inviaEmail);
+    sendButton.addEventListener('click', inviaDati);
 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
@@ -93,34 +93,37 @@ document.addEventListener('DOMContentLoaded', () => {
         link.click();
     }
 
-    function inviaEmail() {
-        const data = [
-            ['POS', pos.value],
-            ['Banconote', banconote.value],
-            ['Fondo Cassa', fondoCassa.value],
-            ['FF', ff.value],
-            ['Rimborsi', rimborsi.value],
-            ['Altro', altro.value],
-            ['Pago Pa', pagoPa.value],
-            ['Farmaconsult', farmaconsult.value],
-            ['Scontrino Fiscale', scontrinoFiscale.value],
-            ['Scontrini', scontrini.value],
-            ['Risultato', risultato.textContent],
-            ['Data', new Date().toLocaleString()]
-        ];
+    function inviaDati() {
+        const data = {
+            pos: pos.value,
+            banconote: banconote.value,
+            fondoCassa: fondoCassa.value,
+            ff: ff.value,
+            rimborsi: rimborsi.value,
+            altro: altro.value,
+            pagoPa: pagoPa.value,
+            farmaconsult: farmaconsult.value,
+            scontrinoFiscale: scontrinoFiscale.value,
+            scontrini: scontrini.value,
+            risultato: risultato.textContent,
+            data: new Date().toLocaleString()
+        };
 
-        let csvContent = "data:text/csv;charset=utf-8,";
-        data.forEach(rowArray => {
-            let row = rowArray.join(",");
-            csvContent += row + "\r\n";
+        fetch('https://www.prova.com', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then(response => {
+            if (response.ok) {
+                alert('Dati inviati con successo');
+            } else {
+                alert('Errore durante l'invio dei dati');
+            }
+        }).catch(error => {
+            console.error('Errore:', error);
+            alert('Errore durante l'invio dei dati');
         });
-
-        const encodedUri = encodeURI(csvContent);
-        const email = "tosello.gianmario@protonmail.com";
-        const subject = "Dati Calcolo Sommatoria";
-        const body = encodeURIComponent("In allegato il file CSV con i dati del calcolo sommatoria.");
-        const mailtoLink = `mailto:${email}?subject=${subject}&body=${body}&attachment=${encodedUri}`;
-
-        window.location.href = mailtoLink;
     }
 });
