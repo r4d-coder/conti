@@ -92,38 +92,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
         link.click();
     }
-
-    function inviaDati() {
-        const data = {
-            pos: pos.value,
-            banconote: banconote.value,
-            fondoCassa: fondoCassa.value,
-            ff: ff.value,
-            rimborsi: rimborsi.value,
-            altro: altro.value,
-            pagoPa: pagoPa.value,
-            farmaconsult: farmaconsult.value,
-            scontrinoFiscale: scontrinoFiscale.value,
-            scontrini: scontrini.value,
-            risultato: risultato.textContent,
-            data: new Date().toLocaleString()
-        };
-
-        fetch('https://script.google.com/macros/s/AKfycbydEn9BkvqE0UBiEIsjLo5CjEOvYD-ACmRLPvvZo6BSYY7cUUGGmkmh0rQKrVx48G9JkQ/exec', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        }).then(response => {
-            if (response.ok) {
-                alert('Dati inviati con successo');
-            } else {
-                alert('Errore durante l'invio dei dati');
-            }
-        }).catch(error => {
-            console.error('Errore:', error);
-            alert('Errore durante l'invio dei dati');
-        });
-    }
-});
